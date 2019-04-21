@@ -1,0 +1,21 @@
+version: "3"
+services:
+    hazelcast_1:
+        image: hazelcast/hazelcast:latest
+        environment:
+            JAVA_OPTS: "-Xms512M -Xmx1024M -Dhazelcast.config=/opt/hazelcast/configFolder/hazelcast.xml -Dhazelcast.mancenter.url=http://mancenter:8080/hazelcast-mancenter -Dgroup.name=hz-compose -Dgroup.password=s3crEt"
+        volumes:
+            - ./conf:/opt/hazelcast/configFolder
+        ports:
+            - "5701:5701"
+        links:
+            - "management-center:mancenter"
+    management-center:
+        image: hazelcast/management-center:latest
+        volumes:
+            - ./data:/data
+        environment:
+            - MANCENTER_DATA=/data
+            - JAVA_OPTS=-Dhazelcast.mc.rest.enabled=true
+        ports:
+            - 8080:8080
